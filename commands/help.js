@@ -9,23 +9,23 @@ const msgAutoDelete = require('../functions/msgAutoDelete.js')
 /* <--- Command ---> */
 
 module.exports = {
-  name: 'help',
-  aliases: ['h'],
-  description: 'pomoc wszelaka!',
+    name: 'help',
+    aliases: ['h'],
+    description: 'pomoc wszelaka!',
 
-  async run(client, msg, args) {
+    async run(client, msg, args) {
 
-    /* <--- command ---> */
+        /* <--- command ---> */
 
-    msg.react('✅');
-    msgAutoDelete(msg, 60);
+        msg.react('✅');
+        msgAutoDelete(msg, 60);
 
-    return msg.channel.send({
-      embeds: [new MessageEmbed()
-        .setColor(config.color1)
-        .setThumbnail(config.icon)
-        .setTitle(`Hej, jestem ${config.name}!`)
-        .setDescription(`
+        return msg.channel.send({
+            embeds: [new MessageEmbed()
+                .setColor(config.color1)
+                .setThumbnail(config.icon)
+                .setTitle(`Hej, jestem ${config.name}!`)
+                .setDescription(`
 Niezbędny bot, do monitorowania aktywności na wybranym serwerze Minecraft przez Discorda! Obsługuje automatycznie odświeżane kanały głosowe (statystyki) oraz wszystkie niezbędne informacje o skonfigurowanym serwerze.
 
 ** ● Komendy:**
@@ -42,10 +42,10 @@ Niezbędny bot, do monitorowania aktywności na wybranym serwerze Minecraft prze
 ** ● Informacje dodatkowe:**
 Wszystkie komendy obsługują również skróty np. zamiast pisać \`${config.prefix}ping\`, równie dobrze możesz wpisać: \`${config.prefix}p\` itp..
         `)
-        .setFooter(`Bot stworzony przez: ${config.author}`)
-        .setTimestamp()
-      ]
-    }).then(msg => msgAutoDelete(msg, 60));
+                .setFooter(`Bot stworzony przez: ${config.author}`)
+                .setTimestamp()
+            ]
+        }).then(msg => msgAutoDelete(msg, 60));
 
-  }
+    }
 };

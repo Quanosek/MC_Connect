@@ -14,67 +14,67 @@ const db = new Database();
 /* <--- Event ---> */
 
 module.exports = {
-  name: 'ready',
+    name: 'ready',
 
-  execute(client) {
+    execute(client) {
 
-    /* <--- on-ready ---> */
+        /* <--- on-ready ---> */
 
-    console.log(`> ` + clr.brightCyan(`[${realDate()}]`) + ` Bot logged in successfully.\n`);
-    client.user.setActivity('Minecraft');
+        console.log(`> ` + clr.brightCyan(`[${realDate()}]`) + ` Bot logged in successfully.\n`);
+        client.user.setActivity('Minecraft');
 
-    /* <--- auto-update channels ---> */
+        /* <--- auto-update channels ---> */
 
-    const Guilds = client.guilds.cache.map(guild => guild.id);
+        const Guilds = client.guilds.cache.map(guild => guild.id);
 
-    setInterval(() => {
+        setInterval(() => {
 
-      Guilds.forEach(async (guild) => {
+            Guilds.forEach(async(guild) => {
 
-        // link
+                // link
 
-        const link = await db.get(`link_${guild}`);
+                const link = await db.get(`link_${guild}`);
 
-        if (link) {
-          let res = await fetch(link);
-          const body = await res.json();
+                if (link) {
+                    let res = await fetch(link);
+                    const body = await res.json();
 
-          // status
+                    // status
 
-          const statusChannelID = await db.get(`statusChannelID_${guild}`);
+                    const statusChannelID = await db.get(`statusChannelID_${guild}`);
 
-          if (statusChannelID) {
-            if (!res) {
-              let statusChannelName = '❌ㅣStatus: Offline';
-              client.channels.cache.get(statusChannelID).setName(statusChannelName);
-            } else {
-              let statusChannelName = (body.online ? '✅ㅣStatus: Online' : '❌ㅣStatus: Offline');
-              client.channels.resolve(statusChannelID).setName(statusChannelName).catch(console.error)
-            };
-          };
+                    if (statusChannelID) {
+                        if (!res) {
+                            let statusChannelName = '❌ㅣStatus: Offline';
+                            client.channels.cache.get(statusChannelID).setName(statusChannelName);
+                        } else {
+                            let statusChannelName = (body.online ? '✅ㅣStatus: Online' : '❌ㅣStatus: Offline');
+                            client.channels.resolve(statusChannelID).setName(statusChannelName).catch(console.error)
+                        };
+                    };
 
-          // players
+                    // players
 
-          const playersChannelID = await db.get(`playersChannelID_${guild}`);
+                    const playersChannelID = await db.get(`playersChannelID_${guild}`);
 
-          if (playersChannelID) {
+                    if (playersChannelID) {
 
-            const amount = body.players.now;
-            let rest = amount % 10;
+                        const amount = body.players.now;
+                        let rest = amount % 10;
 
-            let players;
-            if (amount === 1) players = 'osoba'
-            else if (rest < 2 || rest > 4) players = 'osób'
-            else if (rest > 1 || rest < 5) players = 'osoby'
+                        let players;
+                        if (amount === 1) players = 'osoba'
+                        else if (rest < 2 || rest > 4) players = 'osób'
+                        else if (rest > 1 || rest < 5) players = 'osoby'
 
-            const playersChannelName = `👥ㅣW grze: ${amount} ${players}`;
-            client.channels.resolve(playersChannelID).setName(playersChannelName);
-          };
+                        const playersChannelName = `👥ㅣW grze: ${amount} ${players}`;
+                        client.channels.resolve(playersChannelID).setName(playersChannelName);
+                    };
 
-        }
-      });
+                }
+            });
 
-    }, ms(config.updateInterval));
+        }, ms(config.updateInterval));
 
-  }
+    }
 };

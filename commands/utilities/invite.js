@@ -16,9 +16,6 @@ module.exports = {
 
     async run(client, prefix, msg, args) {
 
-        /** COMMAND */
-
-        msg.react('✅');
         autoDelete(msg, 20);
 
         return msg.channel.send({

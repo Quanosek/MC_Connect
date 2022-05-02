@@ -1,5 +1,5 @@
 {
-    "updateInterval": "11min",
+    "updateInterval": 600000,
 
     "emoji_stop": "<:stop:925344351574450226>",
     "emoji_config": "<:config:925347549399879691>"

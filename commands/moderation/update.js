@@ -1,39 +1,23 @@
-/* <--- Import ---> */
+/** IMPORT */
 
 const { Permissions, MessageEmbed } = require('discord.js');
 const fetch = require('node-fetch')
 
 const config = require('../../config.json');
-const msgAutoDelete = require('../functions/msgAutoDelete.js')
+const autoDelete = require('../../functions/autoDelete.js');
+const schema = require('../../schemas/guilds.js');
 
-const Database = require('@replit/database')
-const db = new Database()
-
-
-/* <--- Command ---> */
+/** UPDATE COMMAND */
 
 module.exports = {
     name: 'update',
     aliases: ['u'],
     description: 'wymuszenie odświeżenia ustawionych kanałów głosowych',
+    permissions: ['MANAGE_MESSAGES'],
 
-    async run(client, msg, args) {
+    async run(client, prefix, msg, args) {
 
-        /* <--- admin ---> */
-
-        if (!msg.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
-            msg.react('❌');
-            msgAutoDelete(msg);
-
-            return msg.channel.send({
-                embeds: [new MessageEmbed()
-                    .setColor(config.color_err)
-                    .setDescription(`${config.emoji_stop} | Nie masz uprawnień do użycia tej komendy!`)
-                ]
-            }).then(msg => msgAutoDelete(msg));
-        };
-
-        /* <--- command ---> */
+        const db = await schema.findOne({ guildId: msg.guild.id }); // database
 
         // link (security)
 

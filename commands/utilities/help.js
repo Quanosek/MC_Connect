@@ -27,18 +27,18 @@ module.exports = {
 Niezbędny bot, do monitorowania aktywności na wybranym serwerze Minecraft przez Discorda! Obsługuje automatycznie odświeżane kanały głosowe (statystyki) oraz wszystkie niezbędne informacje o skonfigurowanym serwerze.
 
 ** ● Komendy:**
-\`${config.prefix}stats\` - informacje o połączonym serwerze Minecraft
-\`${config.prefix}invite\` - zaproszenie bota
-\`${config.prefix}ping\` - test pingu bota
+\`${prefix}stats\` - informacje o połączonym serwerze Minecraft
+\`${prefix}invite\` - zaproszenie bota
+\`${prefix}ping\` - test pingu bota
 
 ** ● Administracja:**
-\`${config.prefix}update\` - wymuszenie odświeżenia ustawionych kanałów głosowych
-\`${config.prefix}config\` - konfiguracja statystyk serwera MC
-\`${config.prefix}delete\` - usuwanie statystyk serwera MC
-\`${config.prefix}reload\` - odświeżenie wszystkich komend bota (globalnie!)
+\`${prefix}update\` - wymuszenie odświeżenia ustawionych kanałów głosowych
+\`${prefix}config\` - konfiguracja statystyk serwera MC
+\`${prefix}delete\` - usuwanie statystyk serwera MC
+\`${prefix}reload\` - odświeżenie wszystkich komend bota (globalnie!)
 
 ** ● Informacje dodatkowe:**
-Wszystkie komendy obsługują również skróty np. zamiast pisać \`${config.prefix}ping\`, równie dobrze możesz wpisać: \`${config.prefix}p\` itp..
+Wszystkie komendy obsługują również skróty np. zamiast pisać \`${prefix}ping\`, równie dobrze możesz wpisać: \`${prefix}p\` itp..
                 `)
                 .setFooter({ text: `Autor bota: ${AUTHOR_NAME} (${AUTHOR_NICK}#${AUTHOR_HASH})` })
             ],

@@ -1,27 +1,25 @@
-/* <--- Import ---> */
+/** IMPORT */
 
-const ms = require('ms');
 const fetch = require('node-fetch');
 const clr = require('colors');
 
 const config = require('../config.json');
 const realDate = require('../functions/realDate.js')
+const schema = require('../schemas/guilds.js');
 
-const Database = require('@replit/database');
-const db = new Database();
-
-
-/* <--- Event ---> */
+/** READY EVENT */
 
 module.exports = {
     name: 'ready',
 
-    execute(client) {
+    async run(client) {
 
-        /* <--- on-ready ---> */
+        // const db = await schema.findOne({ guildId: client.guild.id }); // database
 
-        console.log(`> ` + clr.brightCyan(`[${realDate()}]`) + ` Bot logged in successfully.\n`);
-        client.user.setActivity('Minecraft');
+        /** on ready */
+
+        console.log(realDate() + ' Bot is ready!'.brightYellow); // on ready message// on ready message
+        client.user.setActivity('Minecraft', { type: 'PLAYING' }); // bot activity
 
         /* <--- auto-update channels ---> */
 
@@ -74,7 +72,7 @@ module.exports = {
                 }
             });
 
-        }, ms(config.updateInterval));
+        }, config.updateInterval);
 
     }
 };

@@ -1,23 +1,22 @@
-/* <--- Import ---> */
+/** IMPORT */
 
 const { MessageEmbed } = require('discord.js');
 const fetch = require('node-fetch')
 
-const config = require('../../config.json')
-const msgAutoDelete = require('../functions/msgAutoDelete.js')
+const config = require('../../config.json');
+const autoDelete = require('../../functions/autoDelete.js');
+const schema = require('../../schemas/guilds.js');
 
-const Database = require('@replit/database')
-const db = new Database()
-
-
-/* <--- Command ---> */
+/** STATS COMMAND */
 
 module.exports = {
     name: 'stats',
     aliases: ['stat', 's', 'list', 'l'],
     description: 'informacje o połączonym serwerze Minecraft',
 
-    async run(client, msg, args) {
+    async run(client, prefix, msg, args) {
+
+        const db = await schema.findOne({ guildId: msg.guild.id }); // database
 
         /* <--- data-base ---> */
 

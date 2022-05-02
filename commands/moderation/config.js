@@ -1,38 +1,24 @@
-/* <--- Import ---> */
+/** IMPORT */
 
 const { Permissions, MessageEmbed } = require('discord.js');
 const clr = require('colors');
 
 const config = require('../../config.json');
-const msgAutoDelete = require('../functions/msgAutoDelete.js')
-const realDate = require('../../functions/realDate.js')
+const autoDelete = require('../../functions/autoDelete.js');
+const realDate = require('../../functions/realDate.js');
+const schema = require('../../schemas/guilds.js');
 
-const Database = require('@replit/database')
-const db = new Database()
-
-
-/* <--- Command ---> */
+/** CONFIG COMMAND */
 
 module.exports = {
     name: 'config',
     aliases: ['c'],
     description: 'konfiguracja statystyk serwera MC',
+    permissions: ['ADMINISTRATOR'],
 
-    async run(client, msg, args) {
+    async run(client, prefix, msg, args) {
 
-        /* <--- admin ---> */
-
-        if (!msg.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
-            msg.react('❌');
-            msgAutoDelete(msg);
-
-            return msg.channel.send({
-                embeds: [new MessageEmbed()
-                    .setColor(config.color_err)
-                    .setDescription(`${config.emoji_stop} | Nie masz uprawnień do użycia tej komendy!`)
-                ]
-            }).then(msg => msgAutoDelete(msg));
-        };
+        const db = await schema.findOne({ guildId: msg.guild.id }); // database
 
         /* <--- serverIP ---> */
 

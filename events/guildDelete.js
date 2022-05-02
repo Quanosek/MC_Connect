@@ -1,19 +1,18 @@
-/* <--- Import ---> */
+/** IMPORT */
 
 const clr = require('colors');
 
-const realDate = require('../functions/realDate.js')
+const realDate = require('../functions/realDate.js');
+const schema = require('../schemas/guilds.js');
 
-const Database = require('@replit/database')
-const db = new Database()
-
-
-/* <--- Event ---> */
+/** GUILD DELETE EVENT */
 
 module.exports = {
     name: 'guildDelete',
 
-    async execute(client, guild) {
+    async run(client, guild) {
+
+        const db = await schema.findOne({ guildId: msg.guild.id }); // database
 
         /* <--- delete log ---> */
 
@@ -34,5 +33,5 @@ module.exports = {
             await db.delete(`playersChannelID_${guild.id}`);
         };
 
-    }
+    },
 };

@@ -1,57 +1,79 @@
-/* <--- Import ---> */
+/** IMPORT */
 
+require('dotenv').config();
+const { NAME, TOKEN, MONGO_URI } = process.env;
+
+require('colors');
 const fs = require('fs');
-const clr = require('colors');
+const mongoose = require('mongoose');
 
-const config = require('./config.json');
-const website = require('./functions/website.js')
 const realDate = require('./functions/realDate.js')
 
+/** ON RUN */
 
-/* <--- Start ---> */
+console.clear(); // start with clear terminal
+console.log(realDate() + ' Bot ' + `${NAME}`.brightYellow + ' starting up...'); // log
 
-console.log(`> ` + clr.brightCyan(`[${realDate()}]`) + ` ${config.name} starting up...`);
-website();
+/** MAIN DEFINE */
 
+const { Client, Collection } = require('discord.js');
 
-/* <--- Client---> */
-
-const { Client, Intents, Collection } = require('discord.js');
-const intents = new Intents(32767);
-const client = new Client({
-    shards: 'auto',
+const client = new Client({ // define client
+    intents: 32767,
     restTimeOffset: 0,
-    intents
+    shards: 'auto',
 });
 
+/** commands collections */
 
-/* <--- Handlers ---> */
-
-// commands
-
+client.buttons = new Collection();
+client.slashCommands = new Collection();
 client.commands = new Collection();
 
-fs
-    .readdirSync('./commands')
-    .filter(file => file.endsWith('.js'))
-    .forEach(file => {
-        const command = require(`./commands/${file}`);
-        client.commands.set(command.name, command);
-    });
+const handlers = fs
+    .readdirSync('./handlers')
+    .filter(file => file.endsWith('.js'));
 
-// events
-
-client.events = new Collection();
-
-fs
+const eventFiles = fs
     .readdirSync('./events')
-    .filter(file => file.endsWith('.js'))
-    .forEach(file => {
-        const event = require(`./events/${file}`);
-        client.on(event.name, (...args) => event.execute(client, ...args));
-    });
+    .filter(file => file.endsWith('.js'));
 
+const buttonFiles = fs
+    .readdirSync('./buttons')
+    .filter(file => file.endsWith('.js'));
 
-/* <--- Token ---> */
+const slashCommandsFolders = fs.readdirSync('./slashCommands');
+const commandsFolders = fs.readdirSync('./commands');
 
-client.login(process.env['TOKEN']);
+/** MAIN FUNCTION */
+
+(async() => {
+
+    for (file of handlers) {
+        require(`./handlers/${file}`)(client);
+    };
+
+    /** handlers run */
+
+    client.handleEvents(eventFiles, './events');
+    client.handleButtons(buttonFiles, './buttons');
+    client.handleSlashCommands(slashCommandsFolders, './slashCommands');
+    client.handleCommands(commandsFolders, './commands');
+
+    /** mongoose connection */
+
+    try {
+        if (!MONGO_URI) return;
+        await mongoose.connect(MONGO_URI, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+        }).then(() => console.log(realDate() + ' Connected to database.'));
+    } catch (err) {
+        if (err) return console.error(` >>> ${err}`.brightRed);
+    };
+
+})();
+
+/** TOKEN */
+
+client.login(TOKEN);

@@ -1,87 +1,108 @@
-/* <--- Import ---> */
+/** IMPORT */
+
+require('dotenv').config();
+const { PREFIX, AUTHOR_NAME, AUTHOR_NICK, AUTHOR_HASH, COLOR_ERR, COLOR1 } = process.env;
+
+require('colors');
 
 const { MessageEmbed } = require('discord.js');
 
-const config = require('../config.json');
-const msgAutoDelete = require('../functions/msgAutoDelete.js')
+const autoDelete = require('../functions/autoDelete.js');
+const schema = require('../schemas/guilds.js');
 
-
-/* <--- Event ---> */
+/** MESSAGE CREATE EVENT */
 
 module.exports = {
     name: 'messageCreate',
 
-    async execute(client, msg) {
+    async run(client, msg) {
 
-        if (!msg.channel.permissionsFor(msg.guild.me).has('SEND_MESSAGES')) return;
+        if (!msg.channel.permissionsFor(msg.guild.me).has('SEND_MESSAGES')) return; // if no permissions to send
 
-        /* <--- on mention reply ---> */
+        /** manage database */
+
+        let db = await schema.findOne({ guildId: msg.guild.id });
+        if (!db) db = await schema.create({
+
+            guildId: msg.guild.id,
+            prefix: PREFIX,
+
+        });
+
+        let prefix = db.prefix; // custom prefix
+
+        /** reply on mention */
 
         const mentionRegex = new RegExp(`^<@!?(${client.user.id})>( |)$`, 'gi');
 
         if (msg.content.match(mentionRegex)) {
 
-            msg.react('✅');
-            msgAutoDelete(msg);
+            autoDelete(msg);
 
-            return msg.channel.send({
+            return msg.reply({
                 embeds: [new MessageEmbed()
-                    .setColor(config.color1)
-                    .setTitle(`Mój prefix to : \`${config.prefix}\``)
-                    .setDescription(`Użyj komendy \`${config.prefix}help\` aby uzyskać więcej informacji!`)
-                ]
-            }).then(msg => msgAutoDelete(msg));
+                    .setColor(COLOR1)
+                    .setTitle(`😄 | Hej, to ja!`)
+                    .setDescription(`
+Jestem dedykowanym botem dla serwera dla osób zaangażowanych w rozwój Telewizji Politechniki Lubelskiej.
+
+Mój prefix to \`${prefix}\`
+Użyj komendy \`help\` po więcej inforamcji!
+                    `)
+                    .setFooter({ text: `Autor bota: ${AUTHOR_NAME} (${AUTHOR_NICK}#${AUTHOR_HASH})` })
+                ],
+            }).then(msg => autoDelete(msg));
         };
 
-        /* <--- command-build ---> */
+        /** avoid simple mistakes */
 
-        msg.content = msg.content.toLowerCase();
-
-        if (!msg.content.startsWith(config.prefix) ||
+        if (!msg.content.toLowerCase().startsWith(prefix) ||
+            !msg.guild ||
             msg.author.bot ||
             msg.channel.type === 'dm'
         ) return;
 
-        const args = msg.content
-            .slice(config.prefix.length)
-            .trim()
-            .split(/ +/);
-        const commandName = args.shift();
+        const [cmdName, ...args] = msg.content.slice(prefix.length).trim().split(/ +/g);
 
-        const command = client.commands.get(commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
+        /** find command or aliases */
 
-        if (!command) return;
+        const cmd = client.commands.get(cmdName.toLowerCase()) ||
+            client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(cmdName.toLowerCase()));
 
-        /* <--- no-permission ---> */
+        /** error */
 
-        if (!msg.channel.permissionsFor(msg.guild.me).has('MANAGE_MESSAGES')) {
+        if (!cmd) return; // no command
+        if (!msg.member.permissions.has(cmd.permissions || [])) { // no permissions
 
-            msg.react('❌');
+            autoDelete(msg)
 
             return msg.channel.send({
                 embeds: [new MessageEmbed()
-                    .setColor(config.color_err)
-                    .setDescription(`
-${config.emoji_stop} | **Nie mam uprawnień** do zarządzania wiadomościami na tym kanale! Skontaktuj się z administracją serwera.
-          `)
-                ]
-            });
-
+                    .setColor(COLOR_ERR)
+                    .setDescription('🛑 | Nie masz uprawnień do użycia tej komendy!')
+                ],
+            }).then(msg => autoDelete(msg));
         };
 
-        /* <--- command-run ---> */
+        /** finish */
 
-        command.run(client, msg, args)
-            .catch(err => {
+        try {
+            await cmd.run(client, prefix, msg, args); // run command
+
+        } catch (err) {
+            if (err) {
+
+                console.error(` >>> ${err}`.brightRed);
+                autoDelete(msg);
 
                 return msg.channel.send({
                     embeds: [new MessageEmbed()
-                        .setColor(config.color_err)
-                        .setDescription(`${config.emoji_stop} | ${err}`)
-                    ]
-                }).then(msg => msgAutoDelete(msg, 20));
+                        .setColor(COLOR_ERR)
+                        .setDescription('🛑 | Pojawił się błąd podczas uruchamiania komendy!')
+                    ],
+                }).then(msg => autoDelete(msg));
+            };
+        };
 
-            });
-
-    }
+    },
 };

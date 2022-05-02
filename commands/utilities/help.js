@@ -1,30 +1,28 @@
-/* <--- Import ---> */
+/** IMPORT */
+
+require('dotenv').config();
+const { NAME, ICON, AUTHOR_NAME, AUTHOR_NICK, AUTHOR_HASH, COLOR1 } = process.env;
 
 const { MessageEmbed } = require('discord.js');
 
-const config = require('../config.json');
-const msgAutoDelete = require('../functions/msgAutoDelete.js')
+const autoDelete = require('../../functions/autoDelete.js');
 
-
-/* <--- Command ---> */
+/** HELP COMMAND */
 
 module.exports = {
     name: 'help',
     aliases: ['h'],
-    description: 'pomoc wszelaka!',
+    description: 'Wiadomość informacyjna',
 
-    async run(client, msg, args) {
+    async run(client, prefix, msg, args) {
 
-        /* <--- command ---> */
+        autoDelete(msg, 20);
 
-        msg.react('✅');
-        msgAutoDelete(msg, 60);
-
-        return msg.channel.send({
+        return msg.reply({ // send
             embeds: [new MessageEmbed()
-                .setColor(config.color1)
-                .setThumbnail(config.icon)
-                .setTitle(`Hej, jestem ${config.name}!`)
+                .setColor(COLOR1)
+                .setThumbnail(ICON)
+                .setTitle(`👋 | **Hej, jestem botem ${NAME}!**`)
                 .setDescription(`
 Niezbędny bot, do monitorowania aktywności na wybranym serwerze Minecraft przez Discorda! Obsługuje automatycznie odświeżane kanały głosowe (statystyki) oraz wszystkie niezbędne informacje o skonfigurowanym serwerze.
 
@@ -41,11 +39,10 @@ Niezbędny bot, do monitorowania aktywności na wybranym serwerze Minecraft prze
 
 ** ● Informacje dodatkowe:**
 Wszystkie komendy obsługują również skróty np. zamiast pisać \`${config.prefix}ping\`, równie dobrze możesz wpisać: \`${config.prefix}p\` itp..
-        `)
-                .setFooter(`Bot stworzony przez: ${config.author}`)
-                .setTimestamp()
-            ]
-        }).then(msg => msgAutoDelete(msg, 60));
+                `)
+                .setFooter({ text: `Autor bota: ${AUTHOR_NAME} (${AUTHOR_NICK}#${AUTHOR_HASH})` })
+            ],
+        }).then(msg => autoDelete(msg, 20));
 
-    }
+    },
 };

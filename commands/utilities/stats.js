@@ -3,7 +3,7 @@
 const { MessageEmbed } = require('discord.js');
 const fetch = require('node-fetch')
 
-const config = require('../config.json')
+const config = require('../../config.json')
 const msgAutoDelete = require('../functions/msgAutoDelete.js')
 
 const Database = require('@replit/database')

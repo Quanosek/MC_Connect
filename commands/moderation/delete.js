@@ -2,7 +2,7 @@
 
 const { Permissions, MessageEmbed } = require('discord.js');
 
-const config = require('../config.json');
+const config = require('../../config.json');
 const msgAutoDelete = require('../functions/msgAutoDelete.js')
 
 const Database = require('@replit/database')

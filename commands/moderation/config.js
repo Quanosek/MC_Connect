@@ -3,9 +3,9 @@
 const { Permissions, MessageEmbed } = require('discord.js');
 const clr = require('colors');
 
-const config = require('../config.json');
+const config = require('../../config.json');
 const msgAutoDelete = require('../functions/msgAutoDelete.js')
-const realDate = require('../functions/realDate.js')
+const realDate = require('../../functions/realDate.js')
 
 const Database = require('@replit/database')
 const db = new Database()

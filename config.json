@@ -1,16 +1,4 @@
 {
-    "token": "",
-    "author": "Quanosek#5930",
-
-    "name": "MC_Connect",
-    "id": "908847270169022575",
-    "icon": "https://i.imgur.com/tB11l9Z.jpg",
-    "invite": "https://bit.ly/invite_mc_connect",
-
-    "prefix": "mc!",
-    "color_err": "DARK_RED",
-    "color1": "DARK_GREEN",
-
     "updateInterval": "11min",
 
     "emoji_stop": "<:stop:925344351574450226>",
